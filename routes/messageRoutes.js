@@ -1,6 +1,8 @@
 const express = require('express')
 const messageModel = require('../models/message')
 const app = express()
+var http = require('http').Server(app)
+var io = require('socket.io')(http)
 
 app.delete('/messages/:id', async (req, res) => {
   try {
@@ -44,31 +46,33 @@ app.get('/messages', async (req, res) => {
   }
 })
 
-app.post('/messages', async (req, res) => {
+// app.post('/messages', async (req, res) => {
 
-  try {
+//   try {
 
-    var message = new messageModel(req.body)
+//     var message = new messageModel(req.body)
 
-    await message.save()
+//     await message.save()
 
-    console.log('saved')
+//     console.log('saved')
     
-    var censored = await messageModel.findOne({message: 'badword'})
+//     var censored = await messageModel.findOne({message: 'badword'})
 
-    if (censored) {
-      console.log('censored word found', censored)
-      await messageModel.deleteMany({message: 'badword'})
-    } else {
-      console.log('no censored words found')
-    }
-    res.send(message)
-    res.sendStatus(200)
-  } catch (err) {
-      res.status(500).send(err)
-  } finally {
-    console.log('final clause')
-  }
-})
+//     if (censored) {
+//       console.log('censored word found', censored)
+//       await messageModel.deleteMany({message: 'badword'})
+//     } else {
+//       io.emit('message', req.body)
+//       console.log('no censored words found')
+//     }
+//     res.send(message)
+//     res.sendStatus(200)
+//   } catch (err) {
+//       res.status(500).send(err)
+//   } finally {
+//     console.log('final clause')
+//   }
+// })
+
 
 module.exports = app

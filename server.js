@@ -3,6 +3,7 @@ var bodyParser = require('body-parser')
 var app = express()
 var mongoose = require('mongoose')
 var messageRouter = require('./routes/messageRoutes')
+const messageModel = require('./models/message')
 
 // setting up socket
 var http = require('http').Server(app)
@@ -27,6 +28,34 @@ io.on('connection', (socket) => {
 // connect to mongo altas
 mongoose.connect(dbUrl, {
   useNewUrlParser: true
+})
+
+app.post('/messages', async (req, res) => {
+
+  try {
+
+    var message = new messageModel(req.body)
+
+    await message.save()
+
+    console.log('saved')
+    
+    var censored = await messageModel.findOne({message: 'badword'})
+
+    if (censored) {
+      console.log('censored word found', censored)
+      await messageModel.deleteMany({message: 'badword'})
+    } else {
+      io.emit('message', req.body)
+      console.log('no censored words found')
+    }
+    res.send(message)
+    res.sendStatus(200)
+  } catch (err) {
+      res.status(500).send(err)
+  } finally {
+    console.log('final clause')
+  }
 })
 
 app.use(messageRouter)
