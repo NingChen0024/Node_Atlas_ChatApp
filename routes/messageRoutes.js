@@ -46,6 +46,16 @@ app.get('/messages', async (req, res) => {
   }
 })
 
+app.get('/messages/:name', async (req, res) => {
+  messages = await messageModel.find({name: req.params.name})
+
+  try {
+    res.send(messages)
+  } catch (error) {
+    res.status(500).send(err)
+  }
+})
+
 // app.post('/messages', async (req, res) => {
 
 //   try {

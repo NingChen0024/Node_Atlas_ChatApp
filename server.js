@@ -33,15 +33,14 @@ mongoose.connect(dbUrl, {
 app.post('/messages', async (req, res) => {
 
   try {
-
     var message = new messageModel(req.body)
 
     await message.save()
-
+    
     console.log('saved')
     
     var censored = await messageModel.findOne({message: 'badword'})
-
+    
     if (censored) {
       console.log('censored word found', censored)
       await messageModel.deleteMany({message: 'badword'})
