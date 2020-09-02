@@ -12,7 +12,14 @@ var io = require('socket.io')(http)
 // mongo url
 var dbUrl = 'mongodb+srv://testUser:testUser@cluster0.fl82y.mongodb.net/Cluster0?retryWrites=true&w=majority'
 
-app.use(express.static(__dirname))
+
+if (true){
+  app.use(express.static('build'))
+  app.get('/', (req, res) => {
+      res.sendFile(path.resolve(__dirname, 'build', 'index.html'))
+  })
+}
+// app.use(express.static(__dirname))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extend: false}))
 
